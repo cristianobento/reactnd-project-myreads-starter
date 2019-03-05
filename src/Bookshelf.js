@@ -1,5 +1,4 @@
 import React, { Component } from "react";
-import PropTypes from "prop-types";
 import BookshelfChanger from "./BookshelfChanger";
 
 export default class Bookshelf extends Component {
@@ -8,7 +7,7 @@ export default class Bookshelf extends Component {
   render() {
     const { category, books } = this.props;
     let showingBooks = books;
-    console.log(books);
+
     return (
       <div>
         <div className="bookshelf">
@@ -25,7 +24,9 @@ export default class Bookshelf extends Component {
                           width: 128,
                           height: 193,
                           backgroundImage: `url("${
-                            book.imageLinks.smallThumbnail
+                            typeof book.imageLinks !== "undefined"
+                              ? book.imageLinks.smallThumbnail
+                              : "https://placekitten.com/130/195"
                           }")`
                         }}
                       />

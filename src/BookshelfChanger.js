@@ -1,9 +1,6 @@
 import React, { Component } from "react";
-import PropTypes from "prop-types";
 
 export default class BookshelfChanger extends Component {
-  static propTypes = {};
-
   render() {
     return (
       <div className="book-shelf-changer">
