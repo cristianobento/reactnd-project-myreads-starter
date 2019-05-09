@@ -4,56 +4,74 @@ import * as BooksAPI from "./BooksAPI";
 import { Link } from "react-router-dom";
 
 export default class ListBooks extends Component {
-  constructor(props) {
-    super(props);
-
+  constructor() {
+    super();
     this.state = {
-      currentlyReading: [],
-      wantToRead: [],
-      read: []
+      books: []
     };
+    this.handleBookUpdate = this.handleBookUpdate.bind(this);
   }
 
   componentDidMount() {
-    BooksAPI.getAll().then(result => {
-      let curr = [];
-      let want = [];
-      let read = [];
+    this.getAllBooks();
+  }
 
-      result.forEach(book => {
-        if (book.shelf === "currentlyReading") {
-          curr.push(book);
-        }
-        if (book.shelf === "wantToRead") {
-          want.push(book);
-        }
-        if (book.shelf === "read") {
-          read.push(book);
-        }
-      });
-
-      this.setState(currentState => ({
-        currentlyReading: curr,
-        wantToRead: want,
-        read: read
-      }));
+  getBookById = id => {
+    BooksAPI.get(id).then(book => {
+      return book;
     });
+  };
+
+  getAllBooks = () => {
+    BooksAPI.getAll().then(books => {
+      this.setState({
+        books
+      });
+    });
+  };
+
+  handleBookUpdate() {
+    this.getAllBooks();
   }
 
   render() {
+    let currReadingList = [];
+    let wantToReadList = [];
+    let readList = [];
+
     return (
       <div className="list-books">
         <div className="list-books-title">
           <h1>MyReads</h1>
         </div>
         <div className="list-books-content">
+          {this.state.books.forEach(book => {
+            if (book.shelf === "currentlyReading") {
+              currReadingList.push(book);
+            } else if (book.shelf === "wantToRead") {
+              wantToReadList.push(book);
+            } else if (book.shelf === "read") {
+              readList.push(book);
+            }
+          })}
+
           <Bookshelf
+            handleBookUpdate={this.handleBookUpdate}
             category="Currently Reading"
-            books={this.state.currentlyReading}
+            books={currReadingList}
           />
-          <Bookshelf category="Want to Read" books={this.state.wantToRead} />
-          <Bookshelf category="Read" books={this.state.read} />
+          <Bookshelf
+            handleBookUpdate={this.handleBookUpdate}
+            category="Want to Read"
+            books={wantToReadList}
+          />
+          <Bookshelf
+            handleBookUpdate={this.handleBookUpdate}
+            category="Read"
+            books={readList}
+          />
         </div>
+
         <div className="open-search">
           <Link to="/search" className="add-book">
             Add a book{" "}
