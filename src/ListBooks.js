@@ -35,9 +35,19 @@ export default class ListBooks extends Component {
   }
 
   render() {
-    let currReadingList = [];
-    let wantToReadList = [];
-    let readList = [];
+    const currReadingList = this.state.books.filter(
+      book => book.shelf === "currentlyReading"
+    );
+    const wantToReadList = this.state.books.filter(
+      book => book.shelf === "wantToRead"
+    );
+    const readList = this.state.books.filter(book => book.shelf === "read");
+
+    const shelves = [
+      [currReadingList, "Currently Reading"],
+      [wantToReadList, "Want to Read"],
+      [readList, "Read"]
+    ];
 
     return (
       <div className="list-books">
@@ -45,31 +55,14 @@ export default class ListBooks extends Component {
           <h1>MyReads</h1>
         </div>
         <div className="list-books-content">
-          {this.state.books.forEach(book => {
-            if (book.shelf === "currentlyReading") {
-              currReadingList.push(book);
-            } else if (book.shelf === "wantToRead") {
-              wantToReadList.push(book);
-            } else if (book.shelf === "read") {
-              readList.push(book);
-            }
-          })}
-
-          <Bookshelf
-            handleBookUpdate={this.handleBookUpdate}
-            category="Currently Reading"
-            books={currReadingList}
-          />
-          <Bookshelf
-            handleBookUpdate={this.handleBookUpdate}
-            category="Want to Read"
-            books={wantToReadList}
-          />
-          <Bookshelf
-            handleBookUpdate={this.handleBookUpdate}
-            category="Read"
-            books={readList}
-          />
+          {shelves.map(shelf => (
+            <Bookshelf
+              key={shelf[1]}
+              handleBookUpdate={this.handleBookUpdate}
+              category={shelf[1]}
+              books={shelf[0]}
+            />
+          ))}
         </div>
 
         <div className="open-search">
