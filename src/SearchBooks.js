@@ -34,6 +34,9 @@ export default class SearchBooks extends Component {
         if (this.state.query && this.state.query.length >= 1) {
           this.searchBooks();
         } else if (!this.state.query) {
+          this.setState({
+            books: []
+          });
         }
       }
     );
@@ -58,8 +61,9 @@ export default class SearchBooks extends Component {
         </div>
         <div className="search-books-results">
           <ol className="books-grid">
-            {this.state &&
-              this.state.books &&
+            {!this.state.books ? (
+              <li> No books to show </li>
+            ) : (
               this.state.books.map(book => {
                 if (typeof book.authors === "undefined") {
                   book["authors"] = "";
@@ -77,7 +81,8 @@ export default class SearchBooks extends Component {
                     />
                   </li>
                 );
-              })}
+              })
+            )}
           </ol>
         </div>
       </div>
