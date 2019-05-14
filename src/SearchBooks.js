@@ -1,5 +1,6 @@
 import React, { Component } from "react";
 import { Link } from "react-router-dom";
+import _ from "lodash";
 import Book from "./Book";
 import * as BooksAPI from "./BooksAPI";
 
@@ -12,18 +13,20 @@ export default class SearchBooks extends Component {
     };
   }
 
+  componentDidMount() {
+    this.searchBooks = _.debounce(this.searchBooks, 1000);
+  }
+
   searchBooks() {
-    BooksAPI.search(this.state.query.trim()).then(books => {
-      if (books.error === "empty query") {
-        this.setState({
-          books: []
-        });
-      } else {
-        this.setState({
-          books: books
-        });
-      }
-    });
+    if (this.state.query.trim() && this.state.query.trim().length > 1) {
+      BooksAPI.search(this.state.query.trim())
+        .then(books => {
+          this.setState({
+            books: books
+          });
+        })
+        .catch(() => this.setState({ books: [] }));
+    }
   }
   updateQuery = () => {
     this.setState(
@@ -65,19 +68,21 @@ export default class SearchBooks extends Component {
               <li> No books to show </li>
             ) : (
               this.state.books.map(book => {
-                if (typeof book.authors === "undefined") {
-                  book["authors"] = "";
-                }
-                if (typeof book.imageLinks === "undefined") {
-                  book["imageLinks"] = "";
-                }
+                const thumbnailImage = book.imageLinks
+                  ? book.imageLinks.thumbnail
+                  : "http://via.placeholder.com/128x193?text=No%20Cover";
+
+                const bookAuthors = book.authors
+                  ? book.authors
+                  : "No author specified";
+
                 return (
                   <li key={book.id}>
                     <Book
                       book={book}
                       title={book.title}
-                      authors={book.authors}
-                      url={`url(${book.imageLinks["thumbnail"]})`}
+                      authors={bookAuthors}
+                      url={`url(${thumbnailImage})`}
                     />
                   </li>
                 );
