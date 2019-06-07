@@ -30,6 +30,7 @@ export default class BookshelfChanger extends Component {
   };
 
   render() {
+    console.log(this.props)
     return (
       <select onChange={this.onChange} value={this.state.value} name="category">
         <option disabled>Move to...</option>

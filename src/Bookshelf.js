@@ -7,28 +7,31 @@ export default class Bookshelf extends Component {
     handleBookUpdate: PropTypes.func,
     books: PropTypes.array.isRequired
   };
-  
+
   render() {
+    console.log(this.props)
     return (
       <div className="bookshelf">
         <h2 className="bookshelf-title">{this.props.category}</h2>
         <div className="bookshelf-books">
           <ol className="books-grid">
             {this.props.books.map(book => {
-              if (typeof book.authors === "undefined") {
-                book["authors"] = "";
-              }
-              if (typeof book.imageLinks === "undefined") {
-                book["imageLinks"] = "";
-              }
+              const thumbnailImage = book.imageLinks
+                ? book.imageLinks.thumbnail
+                : "http://via.placeholder.com/128x193?text=No%20Cover";
+
+              const bookAuthors = book.authors
+                ? book.authors
+                : "No author specified";
+
               return (
                 <li key={book.id}>
                   <Book
                     handleBookUpdate={this.props.handleBookUpdate}
                     book={book}
                     title={book.title}
-                    authors={book.authors}
-                    url={`url(${book.imageLinks["thumbnail"]})`}
+                    authors={bookAuthors}
+                    url={`url(${thumbnailImage})`}
                   />
                 </li>
               );

@@ -9,9 +9,18 @@ export default class SearchBooks extends Component {
     super(props);
     this.state = {
       books: [],
-      query: ""
+      query: "",
+      booksFoundList: []
     };
   }
+
+  addShelfToBook = books =>
+    books.map((book = []) => {
+      this.props.books.forEach(element => {
+        if (element.id === book.id) book.shelf = element.shelf;
+      });
+      return book;
+    });
 
   componentDidMount() {
     this.searchBooks = _.debounce(this.searchBooks, 1000);
@@ -21,6 +30,13 @@ export default class SearchBooks extends Component {
     if (this.state.query.trim() && this.state.query.trim().length > 1) {
       BooksAPI.search(this.state.query.trim())
         .then(books => {
+          if (books && books.error) books = [];
+          else books = this.addShelfToBook(books);
+
+          this.setState({
+            booksResearched: books
+          });
+
           this.setState({
             books: books
           });
